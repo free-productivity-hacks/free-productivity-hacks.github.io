@@ -1,0 +1,10 @@
+# Ignore these paths
+User-agent: *
+Disallow: /assets/
+
+# Crawl everything else
+User-agent: *
+Allow: /
+
+# Point to the auto-generated sitemap
+Sitemap: https://free-productivity-hacks.github.io/sitemap-index.xml

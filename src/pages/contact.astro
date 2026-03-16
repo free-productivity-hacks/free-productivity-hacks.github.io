@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contact Us — Productivity Hacks">
+  <header class="page-header" id="page-header">
+    <div class="container">
+      <h1><span class="gradient-text">Contact</span> Us</h1>
+      <p class="page-header-sub">Have a question, suggestion, or just want to say hello? We'd love to hear from you.</p>
+    </div>
+  </header>
+
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-card">
+        <form id="contact-form" name="submit-to-google-sheet">
+          <div class="form-group">
+            <label for="contact-name">Your Name</label>
+            <input type="text" id="contact-name" name="name" placeholder="John Doe" required />
+          </div>
+          <div class="form-group">
+            <label for="contact-email">Email Address</label>
+            <input type="email" id="contact-email" name="email" placeholder="john@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="contact-subject">Subject</label>
+            <input type="text" id="contact-subject" name="subject" placeholder="How can we help?" />
+          </div>
+          <div class="form-group">
+            <label for="contact-message">Message</label>
+            <textarea id="contact-message" name="message" placeholder="Write your message here..." required></textarea>
+          </div>
+          <div class="form-submit">
+            <button type="submit" class="btn btn-primary" id="contact-submit-btn">
+              <span class="btn-icon">✉</span>
+              Send Message
+            </button>
+          </div>
+          <div id="form-status" style="margin-top: 16px; text-align: center; font-weight: 500; font-size: 0.95rem;">
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+  
+<script is:inline>
+    // --- Google Apps Script Configuration ---
+    // IMPORTANT: Replace the URL below with YOUR deployed Google Apps Script Web App URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwqRTOEX2ucoqV6fsz3oMj4aTK5ivIJ8XkMUNlvyFFFQJcPywQm-YaBq9jE2OwYv0aO/exec';
+
+    const form = document.forms['submit-to-google-sheet'];
+    const submitBtn = document.getElementById('contact-submit-btn');
+    const statusDiv = document.getElementById('form-status');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      // Prevent double submissions
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Sending...';
+      statusDiv.textContent = '';
+      statusDiv.style.color = 'var(--text-secondary)';
+
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(response => {
+          statusDiv.textContent = 'Message sent successfully! We will get back to you soon.';
+          statusDiv.style.color = '#10b981'; // Success green
+          form.reset();
+        })
+        .catch(error => {
+          console.error('Error!', error.message);
+          statusDiv.innerHTML = 'Oops! There was a problem submitting your form. <br> Please try again or check your App Script URL.';
+          statusDiv.style.color = '#ef4444'; // Error red
+        })
+        .finally(() => {
+          // Re-enable the button
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span class="btn-icon">✉</span> Send Message';
+        });
+    });
+  </script>
+</Layout>
